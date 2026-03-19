@@ -27,7 +27,7 @@ function App() {
   }
 
   if (currentView === 'dataQuery') {
-    return <DataQuery onBack={() => setCurrentView('home')} />;
+    return <DataQuery onBack={() => setCurrentView('home')} users={userData} />;
   }
 
   return <Home totalUsers={userData.length} onNavigate={setCurrentView} />;
