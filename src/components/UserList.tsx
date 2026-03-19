@@ -48,8 +48,8 @@ function UserList({ onBack, totalUsers, users }: UserListProps) {
   };
 
   return (
-    <main className="min-h-screen px-4 py-6 text-[color:var(--bank-text)]">
-      <div className="mx-auto max-w-md rounded-[28px] border border-[#d7e1ea] bg-white shadow-[0_14px_40px_rgba(26,54,93,0.08)]">
+    <main className="bank-page-shell">
+      <div className="bank-page-card">
         <div className="border-b border-[#d7e1ea] bg-[color:var(--bank-navy)] px-5 py-5 text-white">
           <button
             type="button"

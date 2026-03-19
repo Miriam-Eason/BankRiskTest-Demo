@@ -36,9 +36,9 @@ const featureItems = [
 
 function Home({ totalUsers, onNavigate }: HomeProps) {
   return (
-    <main className="min-h-screen px-4 py-6 text-[color:var(--bank-text)]">
-      <div className="mx-auto max-w-md">
-        <section className="overflow-hidden rounded-[28px] border border-[#d7e1ea] bg-[color:var(--bank-card)] shadow-[0_14px_40px_rgba(26,54,93,0.08)]">
+    <main className="bank-page-shell">
+      <div className="bank-page-card md:max-w-md">
+        <section className="min-h-[100dvh] overflow-hidden bg-[color:var(--bank-card)] md:min-h-0 md:rounded-[28px]">
           <div className="border-b border-[#d7e1ea] bg-[color:var(--bank-navy)] px-5 py-5 text-white">
             <div className="flex items-center justify-between">
               <div>
