@@ -318,6 +318,13 @@ const [currentView, setCurrentView] = useState<ViewType>('home');
 - 已补充搜索栏下方的操作说明文案，提升易用性
 - 已统一三个功能页的交互反馈与信息层级
 
+#### Step 10：构建与部署
+
+- 已创建 `vercel.json`，包含 SPA 回退配置
+- 已确认 `npm run build` 可稳定产出 `dist/` 静态文件
+- 当前项目满足 Vercel 静态部署条件
+- 本地环境暂未配置 GitHub remote，也未安装 `gh` / `vercel` CLI，因此尚未执行最终线上发布
+
 ### 已完成验证
 
 - `npm install` 已完成
@@ -333,11 +340,12 @@ const [currentView, setCurrentView] = useState<ViewType>('home');
 - 已验证风险评估身份证搜索的命中、未命中和清除恢复流程均正常
 - 已验证查询页的身份证精确查询、姓名模糊查询和无结果提示均正常
 - 已验证风险评估页与查询页的空输入提醒及 UI 优化后无功能回归
+- 已验证 `vercel.json` 已补齐，且项目可通过 `npm run build` 生成部署产物
 
 ### 下一步建议
 
-- 继续实现 Step 10：构建与部署
-- 可补充 `vercel.json` 并准备最终部署所需的静态站点配置
+- 准备 GitHub 仓库并推送当前代码
+- 在 Vercel 导入仓库后即可直接部署当前静态站点
 
 ---
 
@@ -392,8 +400,8 @@ const [currentView, setCurrentView] = useState<ViewType>('home');
 - **备注：** 已统一交互样式、补充空输入提示、增强卡片与按钮动效，并优化状态信息层级
 
 ### Step 10：构建与部署
-- **状态：** 未开始
-- **备注：**
+- **状态：** 部分完成（2026-03-19）
+- **备注：** 已完成 Vercel 配置和构建验证；受限于当前环境未配置 GitHub remote 与 Vercel 登录，尚未执行最终线上部署
 
 ---
 
