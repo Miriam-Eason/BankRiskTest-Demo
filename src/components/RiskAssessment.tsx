@@ -24,6 +24,7 @@ const ITEMS_PER_PAGE = 10;
 const CURRENT_YEAR = 2026;
 
 function RiskAssessment({ onBack, users }: RiskAssessmentProps) {
+  const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
   const [searchInput, setSearchInput] = useState('');
@@ -42,6 +43,16 @@ function RiskAssessment({ onBack, users }: RiskAssessmentProps) {
   const totalPages = Math.ceil(riskUsers.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentItems = riskUsers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, []);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -105,7 +116,25 @@ function RiskAssessment({ onBack, users }: RiskAssessmentProps) {
           </p>
         </div>
 
-        <div className="px-5 py-6">
+        {isLoading ? (
+          <div className="flex min-h-[calc(100dvh-145px)] items-center justify-center px-5 py-6 md:min-h-[480px]">
+            <div className="w-full rounded-[28px] border border-[#d7e1ea] bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] px-6 py-10 text-center shadow-[0_14px_40px_rgba(26,54,93,0.08)]">
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[rgba(201,168,76,0.12)] shadow-inner">
+                <div className="h-12 w-12 animate-spin rounded-full border-4 border-[rgba(201,168,76,0.28)] border-t-[#1a365d] border-r-[#c9a84c]" />
+              </div>
+              <p className="mt-6 text-[11px] uppercase tracking-[0.34em] text-[#c9a84c]">
+                Screening
+              </p>
+              <h2 className="mt-3 text-xl font-semibold text-[color:var(--bank-navy)]">
+                正在进行风险数据筛查...
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-[color:var(--bank-muted)]">
+                系统正在根据年龄规则检索高风险用户，并准备展示最新筛查结果。
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="px-5 py-6">
           <div className="rounded-2xl border border-[#fed7d7] bg-[#fff5f5] p-4">
             <div className="flex items-center justify-between gap-4">
               <div>
@@ -239,7 +268,8 @@ function RiskAssessment({ onBack, users }: RiskAssessmentProps) {
               </button>
             </div>
           ) : null}
-        </div>
+          </div>
+        )}
       </div>
 
       <button
