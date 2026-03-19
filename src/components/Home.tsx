@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import type { ViewType } from '../App';
 
 type HomeProps = {
   totalUsers: number;
+  onNavigate: (view: ViewType) => void;
 };
 
 const heroImageUrl =
@@ -10,28 +11,31 @@ const heroSourceUrl = 'https://pixabay.com/photos/china-bank-central-hong-kong-a
 
 const featureItems = [
   {
-    id: 'users',
+    id: 'userList',
     icon: '📋',
     title: '查看用户',
     description: '分页浏览全部用户信息与账户概况',
   },
   {
-    id: 'risk',
+    id: 'riskAssessment',
     icon: '🔍',
     title: '开启风险评估',
     description: '按年龄与性别规则筛选风险用户',
   },
   {
-    id: 'query',
+    id: 'dataQuery',
     icon: '🔎',
     title: '查询数据',
     description: '通过身份证号或姓名快速检索数据',
   },
-] as const;
+] as const satisfies ReadonlyArray<{
+  id: ViewType;
+  icon: string;
+  title: string;
+  description: string;
+}>;
 
-function Home({ totalUsers }: HomeProps) {
-  const [pendingFeature, setPendingFeature] = useState<string>('功能页面将在 Step 4 开始接入。');
-
+function Home({ totalUsers, onNavigate }: HomeProps) {
   return (
     <main className="min-h-screen px-4 py-6 text-[color:var(--bank-text)]">
       <div className="mx-auto max-w-md">
@@ -96,7 +100,7 @@ function Home({ totalUsers }: HomeProps) {
                 <button
                   key={item.id}
                   type="button"
-                  onClick={() => setPendingFeature(`${item.title} 页面将在 Step 4 中接入视图切换。`)}
+                  onClick={() => onNavigate(item.id)}
                   className="group flex min-h-12 w-full items-center justify-between rounded-2xl border border-[#d7e1ea] bg-white px-4 py-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-[color:var(--bank-blue)] hover:shadow-[0_12px_24px_rgba(43,108,176,0.12)]"
                 >
                   <div className="flex items-center gap-3">
@@ -119,7 +123,9 @@ function Home({ totalUsers }: HomeProps) {
 
             <div className="mt-5 rounded-2xl border border-[#ead9a5] bg-[#fffaf0] px-4 py-3">
               <p className="text-sm font-medium text-[color:var(--bank-navy)]">当前状态</p>
-              <p className="mt-1 text-sm leading-6 text-[color:var(--bank-muted)]">{pendingFeature}</p>
+              <p className="mt-1 text-sm leading-6 text-[color:var(--bank-muted)]">
+                3 个入口已接入视图切换，当前功能页先展示标题占位内容。
+              </p>
             </div>
 
             <div className="mt-5 rounded-2xl border border-[#d7e1ea] bg-[#f8fbff] px-4 py-3 text-xs leading-5 text-[color:var(--bank-muted)]">
