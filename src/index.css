@@ -77,11 +77,15 @@ a {
   }
 
   .bank-top-button {
-    @apply fixed bottom-6 right-6 z-20 flex h-14 w-14 items-center justify-center rounded-full border border-white/50 bg-[rgba(255,255,255,0.55)] text-[color:var(--bank-blue)] shadow-[0_10px_30px_rgba(43,108,176,0.22)] backdrop-blur-md transition duration-200 hover:-translate-y-0.5 hover:bg-[rgba(255,255,255,0.7)];
+    @apply fixed bottom-6 right-4 z-20 flex h-14 w-14 items-center justify-center rounded-full border border-white/50 bg-[rgba(255,255,255,0.55)] text-[color:var(--bank-blue)] shadow-[0_10px_30px_rgba(43,108,176,0.22)] backdrop-blur-md transition duration-200 hover:-translate-y-0.5 hover:bg-[rgba(255,255,255,0.7)];
   }
 
   .bank-fade-up {
     animation: bankFadeUp 280ms ease-out;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 220ms ease-out;
   }
 }
 
@@ -94,5 +98,17 @@ a {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }

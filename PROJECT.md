@@ -73,11 +73,13 @@ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hira
 
 ### 3.4 布局规则
 
-- 移动端优先，最大宽度 `max-w-md`（448px），居中显示
+- 移动端优先：手机视口下页面内容必须铺满屏幕宽度，不允许出现整页缩在中间并在四周产生留白边框的情况
+- 桌面端兼容：可使用 `max-w-md`（448px）居中展示主内容卡片
 - 页面内边距统一 `px-4`
 - 卡片圆角 `rounded-lg`，阴影 `shadow-sm`
 - 按钮圆角 `rounded-lg`，高度至少 48px（手机易点击）
 - 各功能页面顶部统一有「← 返回」按钮
+- 页面切换应带有轻量过渡反馈，避免生硬闪切
 
 ---
 
@@ -160,6 +162,10 @@ import userData from './data/data.json';
 - 顶部显示统计信息：「共筛选出 XX 名风险用户」
 - 风险用户以卡片列表展示（支持分页，每页 10 条）
 - 卡片使用红色/橙色左边框标识风险状态
+- 首次进入页面时，先展示 `0.8` 秒的风险筛查 loading 界面，再显示真实数据列表
+- loading 界面需包含一个旋转的圆环动画，以及文案「正在进行风险数据筛查...」
+- loading 使用 `useState + useEffect + setTimeout` 实现
+- loading 配色统一使用主色 `#1a365d` 与强调色 `#c9a84c`
 - 顶部有搜索框：
   - placeholder：「输入身份证号查询是否在风险名单中」
   - 输入身份证号，点击搜索或按回车触发查询
@@ -217,6 +223,13 @@ const [currentView, setCurrentView] = useState<ViewType>('home');
 ```
 
 各子组件通过 `onNavigate` 回调切换视图，**不使用 React Router**。
+
+### 7.1 页面切换动效规范
+
+- 页面切换通过 `isTransitioning` state 配合 `setTimeout` 实现，不引入任何动画库
+- 切换流程固定为：淡出 `200ms` → 切换视图 → 淡入 `200ms`
+- 动效使用 Tailwind 的 `transition`、`opacity`、`translate` 相关 class 实现
+- 过渡期间应临时禁用交互，避免重复点击触发多次切换
 
 ---
 
@@ -325,6 +338,15 @@ const [currentView, setCurrentView] = useState<ViewType>('home');
 - 当前项目满足 Vercel 静态部署条件
 - 本地环境暂未配置 GitHub remote，也未安装 `gh` / `vercel` CLI，因此尚未执行最终线上发布
 
+#### Step 11：移动端适配与交互动效优化
+
+- 已修复 Chrome 开发者工具移动端视图下页面四周出现留白边框的问题
+- 已将页面外层调整为“移动端全宽铺满、桌面端卡片居中”的响应式结构
+- 已补充 `html`、`body`、`#root` 的全高与全宽设置，确保移动端视口正确撑满
+- 已在 `App.tsx` 中增加页面切换的淡入淡出与微位移动效
+- 已在风险评估页增加首屏 `0.8` 秒的风险筛查 loading 动画
+- 所有实现均基于 React + Tailwind 完成，未新增任何依赖
+
 ### 已完成验证
 
 - `npm install` 已完成
@@ -341,6 +363,9 @@ const [currentView, setCurrentView] = useState<ViewType>('home');
 - 已验证查询页的身份证精确查询、姓名模糊查询和无结果提示均正常
 - 已验证风险评估页与查询页的空输入提醒及 UI 优化后无功能回归
 - 已验证 `vercel.json` 已补齐，且项目可通过 `npm run build` 生成部署产物
+- 已验证 Chrome 开发者工具移动端视图下页面内容可铺满屏幕，不再出现整页缩在中间的留白边框
+- 已验证主页、查看用户、风险评估、查询数据之间的切换具备 `200ms` 淡出与 `200ms` 淡入过渡
+- 已验证风险评估页首次进入时会先显示 `0.8` 秒 loading，随后自动展示真实筛查结果
 
 ### 下一步建议
 
@@ -402,6 +427,11 @@ const [currentView, setCurrentView] = useState<ViewType>('home');
 ### Step 10：构建与部署
 - **状态：** 部分完成（2026-03-19）
 - **备注：** 已完成 Vercel 配置和构建验证；受限于当前环境未配置 GitHub remote 与 Vercel 登录，尚未执行最终线上部署
+
+### Step 11：移动端适配与交互动效优化
+- **状态：** 已完成（2026-03-19）
+- **修改文件：** `PROJECT.md`、`src/index.css`、`src/App.tsx`、`src/components/Home.tsx`、`src/components/UserList.tsx`、`src/components/RiskAssessment.tsx`、`src/components/DataQuery.tsx`
+- **备注：** 已修复移动端设备模拟视图下的整页留白问题，统一为移动端全宽布局；同时补充页面切换淡入淡出动效，并为风险评估页新增 `0.8` 秒筛查 loading 动画，未新增任何依赖
 
 ---
 

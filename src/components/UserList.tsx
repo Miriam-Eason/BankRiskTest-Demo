@@ -1,5 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import FloatingBackButton from './FloatingBackButton';
+import ScrollToTopButton from './ScrollToTopButton';
 import UserCard from './UserCard';
+import useFloatingBackButton from '../hooks/useFloatingBackButton';
+import useScrollThreshold from '../hooks/useScrollThreshold';
 
 type User = {
   用户: string;
@@ -26,6 +30,9 @@ const ITEMS_PER_PAGE = 10;
 function UserList({ onBack, totalUsers, users }: UserListProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
+  const headerRef = useRef<HTMLDivElement | null>(null);
+  const showFloatingBackButton = useFloatingBackButton(headerRef);
+  const showScrollToTopButton = useScrollThreshold(300);
 
   const totalPages = Math.ceil(users.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -50,7 +57,10 @@ function UserList({ onBack, totalUsers, users }: UserListProps) {
   return (
     <main className="bank-page-shell">
       <div className="bank-page-card">
-        <div className="border-b border-[#d7e1ea] bg-[color:var(--bank-navy)] px-5 py-5 text-white">
+        <div
+          ref={headerRef}
+          className="border-b border-[#d7e1ea] bg-[color:var(--bank-navy)] px-5 py-5 text-white"
+        >
           <button
             type="button"
             onClick={onBack}
@@ -119,26 +129,8 @@ function UserList({ onBack, totalUsers, users }: UserListProps) {
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={scrollToTop}
-        aria-label="返回顶部"
-        className="bank-top-button"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="h-6 w-6"
-        >
-          <path d="M12 19V5" />
-          <path d="m5 12 7-7 7 7" />
-        </svg>
-      </button>
+      <FloatingBackButton isVisible={showFloatingBackButton} onClick={onBack} />
+      <ScrollToTopButton isVisible={showScrollToTopButton} onClick={scrollToTop} />
     </main>
   );
 }
