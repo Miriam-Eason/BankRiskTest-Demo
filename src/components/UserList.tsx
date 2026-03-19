@@ -25,6 +25,7 @@ const ITEMS_PER_PAGE = 10;
 
 function UserList({ onBack, totalUsers, users }: UserListProps) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [expandedIds, setExpandedIds] = useState<string[]>([]);
 
   const totalPages = Math.ceil(users.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -33,6 +34,18 @@ function UserList({ onBack, totalUsers, users }: UserListProps) {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPage]);
+
+  useEffect(() => {
+    setExpandedIds(currentItems[0] ? [currentItems[0].身份证号] : []);
+  }, [currentPage]);
+
+  const toggleCard = (id: string) => {
+    setExpandedIds((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <main className="min-h-screen px-4 py-6 text-[color:var(--bank-text)]">
@@ -70,7 +83,12 @@ function UserList({ onBack, totalUsers, users }: UserListProps) {
 
           <div className="mt-5 space-y-4">
             {currentItems.map((user) => (
-              <UserCard key={user.身份证号} user={user} />
+              <UserCard
+                key={user.身份证号}
+                user={user}
+                isExpanded={expandedIds.includes(user.身份证号)}
+                onToggle={() => toggleCard(user.身份证号)}
+              />
             ))}
           </div>
 
@@ -97,6 +115,27 @@ function UserList({ onBack, totalUsers, users }: UserListProps) {
           </div>
         </div>
       </div>
+
+      <button
+        type="button"
+        onClick={scrollToTop}
+        aria-label="返回顶部"
+        className="fixed bottom-6 right-6 z-20 flex h-14 w-14 items-center justify-center rounded-full border border-white/50 bg-[rgba(255,255,255,0.55)] text-[color:var(--bank-blue)] shadow-[0_10px_30px_rgba(43,108,176,0.22)] backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-[rgba(255,255,255,0.7)]"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="h-6 w-6"
+        >
+          <path d="M12 19V5" />
+          <path d="m5 12 7-7 7 7" />
+        </svg>
+      </button>
     </main>
   );
 }

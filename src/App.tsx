@@ -23,7 +23,7 @@ function App() {
   }
 
   if (currentView === 'riskAssessment') {
-    return <RiskAssessment onBack={() => setCurrentView('home')} />;
+    return <RiskAssessment onBack={() => setCurrentView('home')} users={userData} />;
   }
 
   if (currentView === 'dataQuery') {

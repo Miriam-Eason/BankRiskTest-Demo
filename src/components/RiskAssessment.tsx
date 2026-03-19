@@ -1,8 +1,61 @@
-type RiskAssessmentProps = {
-  onBack: () => void;
+import { useEffect, useMemo, useState } from 'react';
+import UserCard from './UserCard';
+
+type User = {
+  用户: string;
+  身份证号: string;
+  性别: string;
+  姓名: string;
+  出生年份: number;
+  学历: string;
+  年收入: number;
+  工作领域: string;
+  工作机构: string;
+  账户状态: string;
+  账户金额: number;
 };
 
-function RiskAssessment({ onBack }: RiskAssessmentProps) {
+type RiskAssessmentProps = {
+  onBack: () => void;
+  users: User[];
+};
+
+const ITEMS_PER_PAGE = 10;
+const CURRENT_YEAR = 2026;
+
+function RiskAssessment({ onBack, users }: RiskAssessmentProps) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [expandedIds, setExpandedIds] = useState<string[]>([]);
+
+  const riskUsers = useMemo(
+    () =>
+      users.filter((user) => {
+        const age = CURRENT_YEAR - user.出生年份;
+        return (user.性别 === '女' && age > 55) || (user.性别 === '男' && age > 60);
+      }),
+    [users],
+  );
+
+  const totalPages = Math.ceil(riskUsers.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const currentItems = riskUsers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
+
+  useEffect(() => {
+    setExpandedIds(currentItems[0] ? [currentItems[0].身份证号] : []);
+  }, [currentPage]);
+
+  const toggleCard = (id: string) => {
+    setExpandedIds((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <main className="min-h-screen px-4 py-6 text-[color:var(--bank-text)]">
       <div className="mx-auto max-w-md rounded-[28px] border border-[#d7e1ea] bg-white shadow-[0_14px_40px_rgba(26,54,93,0.08)]">
@@ -16,24 +69,89 @@ function RiskAssessment({ onBack }: RiskAssessmentProps) {
           </button>
           <h1 className="text-[24px] font-semibold">风险评估</h1>
           <p className="mt-2 text-sm leading-6 text-white/80">
-            Step 6 和 Step 7 将在这里接入年龄筛选、风险统计与身份证搜索。
+            基于 2026 年年龄规则筛选风险用户，并按页浏览名单数据。
           </p>
         </div>
 
         <div className="px-5 py-6">
           <div className="rounded-2xl border border-[#fed7d7] bg-[#fff5f5] p-4">
-            <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--bank-danger)]">
-              Risk Module
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--bank-danger)]">
+                  Risk Module
+                </p>
+                <p className="mt-3 text-lg font-semibold text-[color:var(--bank-navy)]">
+                  共筛选出 {riskUsers.length} 名风险用户
+                </p>
+              </div>
+              <div className="rounded-full border border-[#f5b5b5] bg-white px-3 py-1 text-sm font-medium text-[color:var(--bank-danger)]">
+                第 {currentPage}/{totalPages} 页
+              </div>
+            </div>
+            <p className="mt-3 text-sm leading-6 text-[color:var(--bank-muted)]">
+              当前规则：女性年龄大于 55 岁，男性年龄大于 60 岁。每页默认仅展开第一张风险卡片。
             </p>
-            <p className="mt-3 text-lg font-semibold text-[color:var(--bank-navy)]">
-              风险名单筛选功能待接入
-            </p>
-            <p className="mt-2 text-sm leading-6 text-[color:var(--bank-muted)]">
-              后续会按 2026 年年龄规则筛选风险用户，并补充分页列表与身份证检索结果。
-            </p>
+          </div>
+
+          <div className="mt-5 space-y-4">
+            {currentItems.map((user) => (
+              <div
+                key={user.身份证号}
+                className="rounded-xl border-l-4 border-[color:var(--bank-danger)] bg-[#fffaf9] pl-1"
+              >
+                <UserCard
+                  user={user}
+                  isExpanded={expandedIds.includes(user.身份证号)}
+                  onToggle={() => toggleCard(user.身份证号)}
+                />
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 flex items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+              disabled={currentPage === 1}
+              className="min-h-12 flex-1 rounded-lg border border-[#f5b5b5] bg-white px-4 py-3 text-sm font-medium text-[color:var(--bank-danger)] shadow-sm transition hover:border-[color:var(--bank-danger)] disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
+            >
+              上一页
+            </button>
+            <div className="min-w-24 text-center text-sm font-medium text-[color:var(--bank-muted)]">
+              第 {currentPage}/{totalPages} 页
+            </div>
+            <button
+              type="button"
+              onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+              disabled={currentPage === totalPages}
+              className="min-h-12 flex-1 rounded-lg bg-[color:var(--bank-danger)] px-4 py-3 text-sm font-medium text-white shadow-sm transition hover:bg-[#c53030] disabled:cursor-not-allowed disabled:bg-slate-300"
+            >
+              下一页
+            </button>
           </div>
         </div>
       </div>
+
+      <button
+        type="button"
+        onClick={scrollToTop}
+        aria-label="返回顶部"
+        className="fixed bottom-6 right-6 z-20 flex h-14 w-14 items-center justify-center rounded-full border border-white/50 bg-[rgba(255,255,255,0.55)] text-[color:var(--bank-blue)] shadow-[0_10px_30px_rgba(43,108,176,0.22)] backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-[rgba(255,255,255,0.7)]"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="h-6 w-6"
+        >
+          <path d="M12 19V5" />
+          <path d="m5 12 7-7 7 7" />
+        </svg>
+      </button>
     </main>
   );
 }
