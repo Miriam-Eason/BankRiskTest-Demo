@@ -255,6 +255,15 @@ const [currentView, setCurrentView] = useState<ViewType>('home');
 }
 ```
 
+#### Step 3：主页界面
+
+- 已完成手机端优先的银行风格主页 UI
+- 已新增 `src/components/Home.tsx` 作为主页组件
+- Hero 区域已改为外部图片展示，未使用渐变
+- 主页已提供 3 个功能入口按钮，当前为可点击占位态
+- 已展示数据总量、部署形态、终端优先等概览信息
+- 已在页面中补充 Hero 图片来源链接
+
 ### 已完成验证
 
 - `npm install` 已完成
@@ -262,11 +271,12 @@ const [currentView, setCurrentView] = useState<ViewType>('home');
 - `npm run build` 已通过
 - 已验证 `src/data/data.json` 可被前端静态导入
 - 当前 `App.tsx` 中已执行 `console.log('Excel JSON data:', userData)` 用于验证导入结果
+- 已验证主页正常渲染，Hero 外链图片与 3 个入口按钮可正常显示
 
 ### 下一步建议
 
-- 继续实现 Step 3：银行风格主页 UI
-- 然后按 `useState` 方式完成 Step 4 的页面切换
+- 继续实现 Step 4：使用 `useState` 完成页面视图切换
+- 为「查看用户 / 风险评估 / 查询数据」创建占位页面组件
 
 ---
 
@@ -275,20 +285,20 @@ const [currentView, setCurrentView] = useState<ViewType>('home');
 > 每完成一个 Step，在此处追加记录，包括：新增/修改了哪些文件、创建了哪些组件、安装了哪些依赖。这样后续 Step 的执行者可以了解当前项目状态。
 
 ### Step 1：项目初始化
-- **状态：** 未开始
-- **新增文件：**
-- **安装依赖：**
-- **备注：**
+- **状态：** 已完成（2026-03-19）
+- **新增文件：** `package.json`、`tsconfig.json`、`tsconfig.app.json`、`tsconfig.node.json`、`vite.config.ts`、`postcss.config.js`、`tailwind.config.js`、`index.html`、`src/main.tsx`、`src/App.tsx`、`src/index.css`
+- **安装依赖：** `react`、`react-dom`、`vite`、`typescript`、`tailwindcss`、`postcss`、`autoprefixer`、`@vitejs/plugin-react`、`@types/react`、`@types/react-dom`
+- **备注：** 已完成最小可运行项目骨架，`npm run dev` 与 `npm run build` 均已验证
 
 ### Step 2：Excel 数据转 JSON
-- **状态：** 未开始
-- **新增文件：**
-- **备注：**
+- **状态：** 已完成（2026-03-19）
+- **新增文件：** `scripts/excel_to_json.py`、`src/data/data.json`
+- **备注：** 已从 `personal_data.xlsx` 转换出 1000 条 JSON 数据，并完成前端静态导入验证
 
 ### Step 3：主页界面
-- **状态：** 未开始
-- **新增文件：**
-- **备注：**
+- **状态：** 已完成（2026-03-19）
+- **新增文件：** `src/components/Home.tsx`
+- **备注：** 已实现银行风格主页、外部图片 Hero、3 个功能入口按钮，并保留图片来源链接
 
 ### Step 4：视图切换
 - **状态：** 未开始

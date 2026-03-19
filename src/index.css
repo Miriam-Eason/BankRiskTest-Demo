@@ -3,15 +3,35 @@
 @tailwind utilities;
 
 :root {
-  color: #1e293b;
-  background-color: #f8fafc;
+  --bank-navy: #1a365d;
+  --bank-blue: #2b6cb0;
+  --bank-gold: #c9a84c;
+  --bank-danger: #e53e3e;
+  --bank-success: #38a169;
+  --bank-text: #1a202c;
+  --bank-muted: #718096;
+  --bank-card: #ffffff;
+  --bank-page: #f7fafc;
+  color: var(--bank-text);
+  background-color: var(--bank-page);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+
+html {
+  background: var(--bank-page);
 }
 
 body {
   margin: 0;
+  background:
+    radial-gradient(circle at top right, rgba(201, 168, 76, 0.08), transparent 28%),
+    var(--bank-page);
 }
 
 * {
   box-sizing: border-box;
+}
+
+a {
+  color: inherit;
 }
