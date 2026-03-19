@@ -16,6 +16,7 @@ type UserCardProps = {
   user: User;
   isExpanded: boolean;
   onToggle: () => void;
+  hideToggle?: boolean;
 };
 
 const fieldItems: Array<{ key: keyof User; label: string }> = [
@@ -43,7 +44,7 @@ function formatValue(key: keyof User, value: User[keyof User]) {
   return String(value);
 }
 
-function UserCard({ user, isExpanded, onToggle }: UserCardProps) {
+function UserCard({ user, isExpanded, onToggle, hideToggle = false }: UserCardProps) {
   return (
     <article className="rounded-lg border border-[#d7e1ea] bg-white p-4 shadow-sm transition hover:border-[#bfd0e3]">
       <div className={`flex items-start justify-between gap-3 ${isExpanded ? 'border-b border-slate-100 pb-3' : ''}`}>
@@ -59,13 +60,15 @@ function UserCard({ user, isExpanded, onToggle }: UserCardProps) {
           <div className="rounded-full bg-[#fffaf0] px-3 py-1 text-xs font-medium text-[color:var(--bank-gold)]">
             {user.账户状态}
           </div>
-          <button
-            type="button"
-            onClick={onToggle}
-            className="inline-flex min-h-10 items-center rounded-full border border-[#d7e1ea] bg-[#f8fbff] px-3 text-xs font-medium text-[color:var(--bank-blue)] transition hover:border-[color:var(--bank-blue)]"
-          >
-            {isExpanded ? '收起' : '展开'}
-          </button>
+          {hideToggle ? null : (
+            <button
+              type="button"
+              onClick={onToggle}
+              className="inline-flex min-h-10 items-center rounded-full border border-[#d7e1ea] bg-[#f8fbff] px-3 text-xs font-medium text-[color:var(--bank-blue)] transition hover:border-[color:var(--bank-blue)]"
+            >
+              {isExpanded ? '收起' : '展开'}
+            </button>
+          )}
         </div>
       </div>
 

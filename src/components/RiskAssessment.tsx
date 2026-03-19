@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import UserCard from './UserCard';
 
 type User = {
@@ -26,6 +26,8 @@ const CURRENT_YEAR = 2026;
 function RiskAssessment({ onBack, users }: RiskAssessmentProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
+  const [searchInput, setSearchInput] = useState('');
+  const [searchedId, setSearchedId] = useState('');
 
   const riskUsers = useMemo(
     () =>
@@ -50,6 +52,32 @@ function RiskAssessment({ onBack, users }: RiskAssessmentProps) {
 
   const toggleCard = (id: string) => {
     setExpandedIds((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
+  };
+
+  const searchResult = useMemo(() => {
+    if (!searchedId) {
+      return null;
+    }
+
+    return riskUsers.find((user) => user.身份证号.toUpperCase() === searchedId) ?? null;
+  }, [riskUsers, searchedId]);
+
+  const hasSearched = searchedId !== '';
+
+  const handleSearch = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const normalized = searchInput.trim().toUpperCase();
+    if (!normalized) {
+      return;
+    }
+
+    setSearchedId(normalized);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleClearSearch = () => {
+    setSearchInput('');
+    setSearchedId('');
   };
 
   const scrollToTop = () => {
@@ -93,42 +121,108 @@ function RiskAssessment({ onBack, users }: RiskAssessmentProps) {
             </p>
           </div>
 
-          <div className="mt-5 space-y-4">
-            {currentItems.map((user) => (
-              <div
-                key={user.身份证号}
-                className="rounded-xl border-l-4 border-[color:var(--bank-danger)] bg-[#fffaf9] pl-1"
+          <form onSubmit={handleSearch} className="mt-5 rounded-2xl border border-[#d7e1ea] bg-[#f8fbff] p-4">
+            <label
+              htmlFor="risk-search"
+              className="text-xs uppercase tracking-[0.24em] text-[color:var(--bank-muted)]"
+            >
+              Risk Search
+            </label>
+            <div className="mt-3 flex gap-2">
+              <input
+                id="risk-search"
+                type="text"
+                value={searchInput}
+                onChange={(event) => setSearchInput(event.target.value)}
+                placeholder="输入身份证号查询是否在风险名单中"
+                className="min-h-12 flex-1 rounded-lg border border-[#d7e1ea] bg-white px-4 text-sm text-[color:var(--bank-text)] outline-none transition placeholder:text-slate-400 focus:border-[color:var(--bank-blue)]"
+              />
+              <button
+                type="submit"
+                className="min-h-12 rounded-lg bg-[color:var(--bank-danger)] px-4 text-sm font-medium text-white shadow-sm transition hover:bg-[#c53030]"
               >
-                <UserCard
-                  user={user}
-                  isExpanded={expandedIds.includes(user.身份证号)}
-                  onToggle={() => toggleCard(user.身份证号)}
-                />
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-6 flex items-center justify-between gap-3">
-            <button
-              type="button"
-              onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-              disabled={currentPage === 1}
-              className="min-h-12 flex-1 rounded-lg border border-[#f5b5b5] bg-white px-4 py-3 text-sm font-medium text-[color:var(--bank-danger)] shadow-sm transition hover:border-[color:var(--bank-danger)] disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
-            >
-              上一页
-            </button>
-            <div className="min-w-24 text-center text-sm font-medium text-[color:var(--bank-muted)]">
-              第 {currentPage}/{totalPages} 页
+                搜索
+              </button>
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                className="min-h-12 rounded-lg border border-[#d7e1ea] bg-white px-4 text-sm font-medium text-[color:var(--bank-navy)] shadow-sm transition hover:border-[color:var(--bank-blue)]"
+              >
+                清除
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
-              disabled={currentPage === totalPages}
-              className="min-h-12 flex-1 rounded-lg bg-[color:var(--bank-danger)] px-4 py-3 text-sm font-medium text-white shadow-sm transition hover:bg-[#c53030] disabled:cursor-not-allowed disabled:bg-slate-300"
-            >
-              下一页
-            </button>
-          </div>
+          </form>
+
+          {hasSearched ? (
+            <div className="mt-5">
+              {searchResult ? (
+                <div className="rounded-2xl border border-[#feb2b2] bg-[#fff5f5] p-4 shadow-sm">
+                  <p className="text-sm font-semibold text-[color:var(--bank-danger)]">
+                    ⚠️ 该用户在风险名单中
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-[color:var(--bank-muted)]">
+                    已根据身份证号定位到风险用户，清除搜索后可恢复完整风险列表。
+                  </p>
+                  <div className="mt-4 rounded-xl border-l-4 border-[color:var(--bank-danger)] bg-[#fffaf9] pl-1">
+                    <UserCard
+                      user={searchResult}
+                      isExpanded
+                      onToggle={() => undefined}
+                      hideToggle
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-[#9ae6b4] bg-[#f0fff4] p-4 shadow-sm">
+                  <p className="text-sm font-semibold text-[color:var(--bank-success)]">
+                    ✅ 未在风险名单中找到该用户
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-[color:var(--bank-muted)]">
+                    当前输入的身份证号不在风险筛选结果中，可修改后再次搜索。
+                  </p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="mt-5 space-y-4">
+              {currentItems.map((user) => (
+                <div
+                  key={user.身份证号}
+                  className="rounded-xl border-l-4 border-[color:var(--bank-danger)] bg-[#fffaf9] pl-1"
+                >
+                  <UserCard
+                    user={user}
+                    isExpanded={expandedIds.includes(user.身份证号)}
+                    onToggle={() => toggleCard(user.身份证号)}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {!hasSearched ? (
+            <div className="mt-6 flex items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                disabled={currentPage === 1}
+                className="min-h-12 flex-1 rounded-lg border border-[#f5b5b5] bg-white px-4 py-3 text-sm font-medium text-[color:var(--bank-danger)] shadow-sm transition hover:border-[color:var(--bank-danger)] disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
+              >
+                上一页
+              </button>
+              <div className="min-w-24 text-center text-sm font-medium text-[color:var(--bank-muted)]">
+                第 {currentPage}/{totalPages} 页
+              </div>
+              <button
+                type="button"
+                onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+                disabled={currentPage === totalPages}
+                className="min-h-12 flex-1 rounded-lg bg-[color:var(--bank-danger)] px-4 py-3 text-sm font-medium text-white shadow-sm transition hover:bg-[#c53030] disabled:cursor-not-allowed disabled:bg-slate-300"
+              >
+                下一页
+              </button>
+            </div>
+          ) : null}
         </div>
       </div>
 
