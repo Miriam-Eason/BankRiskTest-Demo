@@ -13,7 +13,13 @@ function App() {
   const [currentView, setCurrentView] = useState<ViewType>('home');
 
   if (currentView === 'userList') {
-    return <UserList onBack={() => setCurrentView('home')} totalUsers={userData.length} />;
+    return (
+      <UserList
+        onBack={() => setCurrentView('home')}
+        totalUsers={userData.length}
+        users={userData}
+      />
+    );
   }
 
   if (currentView === 'riskAssessment') {

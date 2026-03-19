@@ -272,6 +272,14 @@ const [currentView, setCurrentView] = useState<ViewType>('home');
 - 各功能页面顶部已统一提供「← 返回主页」按钮
 - 当前 3 个功能页面均展示标题和后续步骤提示内容
 
+#### Step 5：查看用户功能
+
+- 已实现用户数据卡片列表展示，采用手机端卡片布局
+- 已新增公共组件 `src/components/UserCard.tsx`
+- `查看用户` 页面已接入 `src/data/data.json` 静态数据
+- 已实现分页功能，每页展示 10 条记录
+- 页面顶部已显示总数据条数，底部已提供「上一页 / 下一页」和页码显示
+
 ### 已完成验证
 
 - `npm install` 已完成
@@ -281,11 +289,12 @@ const [currentView, setCurrentView] = useState<ViewType>('home');
 - 当前 `App.tsx` 中已执行 `console.log('Excel JSON data:', userData)` 用于验证导入结果
 - 已验证主页正常渲染，Hero 外链图片与 3 个入口按钮可正常显示
 - 已验证主页与 3 个功能页之间的进入/返回切换全部正常
+- 已验证「查看用户」第一页展示 10 条记录，翻页到第二页后内容和页码同步更新
 
 ### 下一步建议
 
-- 继续实现 Step 5：查看用户分页卡片列表
-- 建议优先补充 `UserCard.tsx` 公共卡片组件，便于后续 Step 5、6、8 复用
+- 继续实现 Step 6：风险评估数据筛选与分页展示
+- 可直接复用 `UserCard.tsx` 作为风险用户和查询结果的基础卡片组件
 
 ---
 
@@ -315,9 +324,9 @@ const [currentView, setCurrentView] = useState<ViewType>('home');
 - **备注：** 已通过 `useState` 完成主页与 3 个功能页的切换，并补充统一返回按钮
 
 ### Step 5：查看用户功能
-- **状态：** 未开始
-- **新增文件：**
-- **备注：**
+- **状态：** 已完成（2026-03-19）
+- **新增文件：** `src/components/UserCard.tsx`
+- **备注：** 已完成用户卡片列表、总条数展示和每页 10 条分页功能
 
 ### Step 6：风险评估 — 数据筛选
 - **状态：** 未开始

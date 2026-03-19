@@ -1,9 +1,39 @@
+import { useEffect, useState } from 'react';
+import UserCard from './UserCard';
+
+type User = {
+  用户: string;
+  身份证号: string;
+  性别: string;
+  姓名: string;
+  出生年份: number;
+  学历: string;
+  年收入: number;
+  工作领域: string;
+  工作机构: string;
+  账户状态: string;
+  账户金额: number;
+};
+
 type UserListProps = {
   onBack: () => void;
   totalUsers: number;
+  users: User[];
 };
 
-function UserList({ onBack, totalUsers }: UserListProps) {
+const ITEMS_PER_PAGE = 10;
+
+function UserList({ onBack, totalUsers, users }: UserListProps) {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(users.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const currentItems = users.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
+
   return (
     <main className="min-h-screen px-4 py-6 text-[color:var(--bank-text)]">
       <div className="mx-auto max-w-md rounded-[28px] border border-[#d7e1ea] bg-white shadow-[0_14px_40px_rgba(26,54,93,0.08)]">
@@ -17,21 +47,53 @@ function UserList({ onBack, totalUsers }: UserListProps) {
           </button>
           <h1 className="text-[24px] font-semibold">查看用户</h1>
           <p className="mt-2 text-sm leading-6 text-white/80">
-            Step 5 将在这里接入用户卡片列表、分页与总数据条数展示。
+            浏览全部用户信息，支持按页查看完整档案数据。
           </p>
         </div>
 
         <div className="px-5 py-6">
           <div className="rounded-2xl border border-[#d7e1ea] bg-[#f8fbff] p-4">
-            <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--bank-muted)]">
-              Current Scope
-            </p>
-            <p className="mt-3 text-lg font-semibold text-[color:var(--bank-navy)]">
-              共 {totalUsers} 条记录待展示
-            </p>
-            <p className="mt-2 text-sm leading-6 text-[color:var(--bank-muted)]">
-              当前阶段仅完成视图切换，下一步会将静态 JSON 数据按卡片形式展示，每页 10 条。
-            </p>
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--bank-muted)]">
+                  User Records
+                </p>
+                <p className="mt-3 text-lg font-semibold text-[color:var(--bank-navy)]">
+                  共 {totalUsers} 条记录
+                </p>
+              </div>
+              <div className="rounded-full border border-[#d7e1ea] bg-white px-3 py-1 text-sm font-medium text-[color:var(--bank-blue)]">
+                第 {currentPage}/{totalPages} 页
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-5 space-y-4">
+            {currentItems.map((user) => (
+              <UserCard key={user.身份证号} user={user} />
+            ))}
+          </div>
+
+          <div className="mt-6 flex items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+              disabled={currentPage === 1}
+              className="min-h-12 flex-1 rounded-lg border border-[#d7e1ea] bg-white px-4 py-3 text-sm font-medium text-[color:var(--bank-navy)] shadow-sm transition hover:border-[color:var(--bank-blue)] disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
+            >
+              上一页
+            </button>
+            <div className="min-w-24 text-center text-sm font-medium text-[color:var(--bank-muted)]">
+              第 {currentPage}/{totalPages} 页
+            </div>
+            <button
+              type="button"
+              onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+              disabled={currentPage === totalPages}
+              className="min-h-12 flex-1 rounded-lg bg-[color:var(--bank-navy)] px-4 py-3 text-sm font-medium text-white shadow-sm transition hover:bg-[#244a79] disabled:cursor-not-allowed disabled:bg-slate-300"
+            >
+              下一页
+            </button>
           </div>
         </div>
       </div>
