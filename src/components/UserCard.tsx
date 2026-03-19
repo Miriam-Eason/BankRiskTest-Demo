@@ -45,8 +45,13 @@ function formatValue(key: keyof User, value: User[keyof User]) {
 }
 
 function UserCard({ user, isExpanded, onToggle, hideToggle = false }: UserCardProps) {
+  const statusClass =
+    user.账户状态 === '正常'
+      ? 'bg-[#f0fff4] text-[color:var(--bank-success)]'
+      : 'bg-[#fff5f5] text-[color:var(--bank-danger)]';
+
   return (
-    <article className="rounded-lg border border-[#d7e1ea] bg-white p-4 shadow-sm transition hover:border-[#bfd0e3]">
+    <article className="bank-fade-up rounded-lg border border-[#d7e1ea] bg-white p-4 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[#bfd0e3] hover:shadow-[0_16px_28px_rgba(26,54,93,0.08)]">
       <div className={`flex items-start justify-between gap-3 ${isExpanded ? 'border-b border-slate-100 pb-3' : ''}`}>
         <div className="min-w-0 flex-1">
           <p className="text-[11px] uppercase tracking-[0.22em] text-[color:var(--bank-muted)]">用户档案</p>
@@ -57,14 +62,14 @@ function UserCard({ user, isExpanded, onToggle, hideToggle = false }: UserCardPr
           </div>
         </div>
         <div className="flex flex-col items-end gap-2">
-          <div className="rounded-full bg-[#fffaf0] px-3 py-1 text-xs font-medium text-[color:var(--bank-gold)]">
+          <div className={`rounded-full px-3 py-1 text-xs font-medium ${statusClass}`}>
             {user.账户状态}
           </div>
           {hideToggle ? null : (
             <button
               type="button"
               onClick={onToggle}
-              className="inline-flex min-h-10 items-center rounded-full border border-[#d7e1ea] bg-[#f8fbff] px-3 text-xs font-medium text-[color:var(--bank-blue)] transition hover:border-[color:var(--bank-blue)]"
+              className="inline-flex min-h-10 items-center rounded-full border border-[#d7e1ea] bg-[#f8fbff] px-3 text-xs font-medium text-[color:var(--bank-blue)] transition duration-200 hover:border-[color:var(--bank-blue)] hover:bg-white"
             >
               {isExpanded ? '收起' : '展开'}
             </button>

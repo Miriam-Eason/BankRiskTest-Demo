@@ -54,7 +54,7 @@ function UserList({ onBack, totalUsers, users }: UserListProps) {
           <button
             type="button"
             onClick={onBack}
-            className="mb-4 inline-flex min-h-12 items-center rounded-lg border border-white/20 px-4 text-sm font-medium text-white transition hover:bg-white/10"
+            className="mb-4 inline-flex min-h-12 items-center rounded-lg border border-white/20 px-4 text-sm font-medium text-white transition duration-200 hover:bg-white/10"
           >
             ← 返回主页
           </button>
@@ -65,7 +65,7 @@ function UserList({ onBack, totalUsers, users }: UserListProps) {
         </div>
 
         <div className="px-5 py-6">
-          <div className="rounded-2xl border border-[#d7e1ea] bg-[#f8fbff] p-4">
+          <div className="bank-subpanel">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--bank-muted)]">
@@ -79,6 +79,9 @@ function UserList({ onBack, totalUsers, users }: UserListProps) {
                 第 {currentPage}/{totalPages} 页
               </div>
             </div>
+            <p className="mt-3 text-sm leading-6 text-[color:var(--bank-muted)]">
+              为了减少页面冗长感，当前页默认仅展开第一张卡片，其余卡片可按需展开查看。
+            </p>
           </div>
 
           <div className="mt-5 space-y-4">
@@ -97,7 +100,7 @@ function UserList({ onBack, totalUsers, users }: UserListProps) {
               type="button"
               onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
               disabled={currentPage === 1}
-              className="min-h-12 flex-1 rounded-lg border border-[#d7e1ea] bg-white px-4 py-3 text-sm font-medium text-[color:var(--bank-navy)] shadow-sm transition hover:border-[color:var(--bank-blue)] disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
+              className="bank-secondary-button flex-1 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
             >
               上一页
             </button>
@@ -108,7 +111,7 @@ function UserList({ onBack, totalUsers, users }: UserListProps) {
               type="button"
               onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
               disabled={currentPage === totalPages}
-              className="min-h-12 flex-1 rounded-lg bg-[color:var(--bank-navy)] px-4 py-3 text-sm font-medium text-white shadow-sm transition hover:bg-[#244a79] disabled:cursor-not-allowed disabled:bg-slate-300"
+              className="bank-primary-button flex-1 bg-[color:var(--bank-navy)] hover:bg-[#244a79] disabled:cursor-not-allowed disabled:bg-slate-300"
             >
               下一页
             </button>
@@ -120,7 +123,7 @@ function UserList({ onBack, totalUsers, users }: UserListProps) {
         type="button"
         onClick={scrollToTop}
         aria-label="返回顶部"
-        className="fixed bottom-6 right-6 z-20 flex h-14 w-14 items-center justify-center rounded-full border border-white/50 bg-[rgba(255,255,255,0.55)] text-[color:var(--bank-blue)] shadow-[0_10px_30px_rgba(43,108,176,0.22)] backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-[rgba(255,255,255,0.7)]"
+        className="bank-top-button"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

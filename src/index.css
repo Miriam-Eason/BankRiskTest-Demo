@@ -35,3 +35,45 @@ body {
 a {
   color: inherit;
 }
+
+@layer components {
+  .bank-panel {
+    @apply rounded-[28px] border border-[#d7e1ea] bg-white shadow-[0_14px_40px_rgba(26,54,93,0.08)];
+  }
+
+  .bank-subpanel {
+    @apply rounded-2xl border border-[#d7e1ea] bg-[#f8fbff] p-4 shadow-sm;
+  }
+
+  .bank-input {
+    @apply min-h-12 flex-1 rounded-lg border border-[#d7e1ea] bg-white px-4 text-sm text-[color:var(--bank-text)] outline-none transition placeholder:text-slate-400 focus:border-[color:var(--bank-blue)] focus:ring-2 focus:ring-[rgba(43,108,176,0.12)];
+  }
+
+  .bank-primary-button {
+    @apply min-h-12 rounded-lg px-4 text-sm font-medium text-white shadow-sm transition duration-200 hover:-translate-y-0.5;
+  }
+
+  .bank-secondary-button {
+    @apply min-h-12 rounded-lg border border-[#d7e1ea] bg-white px-4 text-sm font-medium text-[color:var(--bank-navy)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[color:var(--bank-blue)];
+  }
+
+  .bank-top-button {
+    @apply fixed bottom-6 right-6 z-20 flex h-14 w-14 items-center justify-center rounded-full border border-white/50 bg-[rgba(255,255,255,0.55)] text-[color:var(--bank-blue)] shadow-[0_10px_30px_rgba(43,108,176,0.22)] backdrop-blur-md transition duration-200 hover:-translate-y-0.5 hover:bg-[rgba(255,255,255,0.7)];
+  }
+
+  .bank-fade-up {
+    animation: bankFadeUp 280ms ease-out;
+  }
+}
+
+@keyframes bankFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

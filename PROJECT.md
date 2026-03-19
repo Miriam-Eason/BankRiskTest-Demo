@@ -309,6 +309,15 @@ const [currentView, setCurrentView] = useState<ViewType>('home');
 - 查询无结果时会显示「未找到匹配的用户」
 - 查询页已同步支持清除与返回顶部按钮
 
+#### Step 9：UI 打磨
+
+- 已统一按钮、输入框、信息面板与返回顶部按钮的视觉样式
+- 已为卡片和结果区域增加轻量动效与悬停反馈
+- 已优化用户卡片状态标签，正常状态使用绿色提示
+- 已为风险评估页和查询页增加空输入提示，避免无反馈点击
+- 已补充搜索栏下方的操作说明文案，提升易用性
+- 已统一三个功能页的交互反馈与信息层级
+
 ### 已完成验证
 
 - `npm install` 已完成
@@ -323,11 +332,12 @@ const [currentView, setCurrentView] = useState<ViewType>('home');
 - 已验证风险评估结果为 700 人，分页正常，且每页仅首张风险卡片默认展开
 - 已验证风险评估身份证搜索的命中、未命中和清除恢复流程均正常
 - 已验证查询页的身份证精确查询、姓名模糊查询和无结果提示均正常
+- 已验证风险评估页与查询页的空输入提醒及 UI 优化后无功能回归
 
 ### 下一步建议
 
-- 继续实现 Step 9：UI 打磨与细节优化
-- 可统一 3 个功能页的搜索栏、卡片状态提示和交互动效细节
+- 继续实现 Step 10：构建与部署
+- 可补充 `vercel.json` 并准备最终部署所需的静态站点配置
 
 ---
 
@@ -377,9 +387,9 @@ const [currentView, setCurrentView] = useState<ViewType>('home');
 - **备注：** 已完成身份证精确查询、姓名模糊匹配、无结果提示以及查询结果卡片展示
 
 ### Step 9：UI 打磨
-- **状态：** 未开始
-- **修改文件：**
-- **备注：**
+- **状态：** 已完成（2026-03-19）
+- **修改文件：** `src/index.css`、`src/components/UserCard.tsx`、`src/components/UserList.tsx`、`src/components/RiskAssessment.tsx`、`src/components/DataQuery.tsx`
+- **备注：** 已统一交互样式、补充空输入提示、增强卡片与按钮动效，并优化状态信息层级
 
 ### Step 10：构建与部署
 - **状态：** 未开始

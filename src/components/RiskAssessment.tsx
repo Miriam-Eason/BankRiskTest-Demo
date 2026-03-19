@@ -28,6 +28,7 @@ function RiskAssessment({ onBack, users }: RiskAssessmentProps) {
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
   const [searchInput, setSearchInput] = useState('');
   const [searchedId, setSearchedId] = useState('');
+  const [searchMessage, setSearchMessage] = useState('');
 
   const riskUsers = useMemo(
     () =>
@@ -68,9 +69,11 @@ function RiskAssessment({ onBack, users }: RiskAssessmentProps) {
     event.preventDefault();
     const normalized = searchInput.trim().toUpperCase();
     if (!normalized) {
+      setSearchMessage('请输入身份证号后再进行查询。');
       return;
     }
 
+    setSearchMessage('');
     setSearchedId(normalized);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -78,6 +81,7 @@ function RiskAssessment({ onBack, users }: RiskAssessmentProps) {
   const handleClearSearch = () => {
     setSearchInput('');
     setSearchedId('');
+    setSearchMessage('');
   };
 
   const scrollToTop = () => {
@@ -121,7 +125,7 @@ function RiskAssessment({ onBack, users }: RiskAssessmentProps) {
             </p>
           </div>
 
-          <form onSubmit={handleSearch} className="mt-5 rounded-2xl border border-[#d7e1ea] bg-[#f8fbff] p-4">
+          <form onSubmit={handleSearch} className="bank-subpanel mt-5">
             <label
               htmlFor="risk-search"
               className="text-xs uppercase tracking-[0.24em] text-[color:var(--bank-muted)]"
@@ -133,24 +137,36 @@ function RiskAssessment({ onBack, users }: RiskAssessmentProps) {
                 id="risk-search"
                 type="text"
                 value={searchInput}
-                onChange={(event) => setSearchInput(event.target.value)}
+                onChange={(event) => {
+                  setSearchInput(event.target.value);
+                  if (searchMessage) {
+                    setSearchMessage('');
+                  }
+                }}
                 placeholder="输入身份证号查询是否在风险名单中"
-                className="min-h-12 flex-1 rounded-lg border border-[#d7e1ea] bg-white px-4 text-sm text-[color:var(--bank-text)] outline-none transition placeholder:text-slate-400 focus:border-[color:var(--bank-blue)]"
+                className="bank-input"
               />
               <button
                 type="submit"
-                className="min-h-12 rounded-lg bg-[color:var(--bank-danger)] px-4 text-sm font-medium text-white shadow-sm transition hover:bg-[#c53030]"
+                className="bank-primary-button bg-[color:var(--bank-danger)] hover:bg-[#c53030]"
               >
                 搜索
               </button>
               <button
                 type="button"
                 onClick={handleClearSearch}
-                className="min-h-12 rounded-lg border border-[#d7e1ea] bg-white px-4 text-sm font-medium text-[color:var(--bank-navy)] shadow-sm transition hover:border-[color:var(--bank-blue)]"
+                className="bank-secondary-button"
               >
                 清除
               </button>
             </div>
+            {searchMessage ? (
+              <p className="mt-3 text-sm font-medium text-[color:var(--bank-danger)]">{searchMessage}</p>
+            ) : (
+              <p className="mt-3 text-xs leading-5 text-[color:var(--bank-muted)]">
+                支持按回车直接搜索，命中后会单独高亮显示该风险用户。
+              </p>
+            )}
           </form>
 
           {hasSearched ? (
@@ -173,7 +189,7 @@ function RiskAssessment({ onBack, users }: RiskAssessmentProps) {
                   </div>
                 </div>
               ) : (
-                <div className="rounded-2xl border border-[#9ae6b4] bg-[#f0fff4] p-4 shadow-sm">
+                <div className="bank-fade-up rounded-2xl border border-[#9ae6b4] bg-[#f0fff4] p-4 shadow-sm">
                   <p className="text-sm font-semibold text-[color:var(--bank-success)]">
                     ✅ 未在风险名单中找到该用户
                   </p>
@@ -206,7 +222,7 @@ function RiskAssessment({ onBack, users }: RiskAssessmentProps) {
                 type="button"
                 onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
                 disabled={currentPage === 1}
-                className="min-h-12 flex-1 rounded-lg border border-[#f5b5b5] bg-white px-4 py-3 text-sm font-medium text-[color:var(--bank-danger)] shadow-sm transition hover:border-[color:var(--bank-danger)] disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
+                className="bank-secondary-button flex-1 border-[#f5b5b5] text-[color:var(--bank-danger)] disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
               >
                 上一页
               </button>
@@ -217,7 +233,7 @@ function RiskAssessment({ onBack, users }: RiskAssessmentProps) {
                 type="button"
                 onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
                 disabled={currentPage === totalPages}
-                className="min-h-12 flex-1 rounded-lg bg-[color:var(--bank-danger)] px-4 py-3 text-sm font-medium text-white shadow-sm transition hover:bg-[#c53030] disabled:cursor-not-allowed disabled:bg-slate-300"
+                className="bank-primary-button flex-1 bg-[color:var(--bank-danger)] hover:bg-[#c53030] disabled:cursor-not-allowed disabled:bg-slate-300"
               >
                 下一页
               </button>
@@ -230,7 +246,7 @@ function RiskAssessment({ onBack, users }: RiskAssessmentProps) {
         type="button"
         onClick={scrollToTop}
         aria-label="返回顶部"
-        className="fixed bottom-6 right-6 z-20 flex h-14 w-14 items-center justify-center rounded-full border border-white/50 bg-[rgba(255,255,255,0.55)] text-[color:var(--bank-blue)] shadow-[0_10px_30px_rgba(43,108,176,0.22)] backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-[rgba(255,255,255,0.7)]"
+        className="bank-top-button"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

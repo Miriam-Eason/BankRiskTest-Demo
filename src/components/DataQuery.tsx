@@ -26,14 +26,17 @@ function DataQuery({ onBack, users }: DataQueryProps) {
   const [searchMode, setSearchMode] = useState<'id' | 'name'>('id');
   const [results, setResults] = useState<User[]>([]);
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
+  const [queryMessage, setQueryMessage] = useState('');
 
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const normalized = queryInput.trim();
     if (!normalized) {
+      setQueryMessage('请输入身份证号或姓名后再进行查询。');
       return;
     }
 
+    setQueryMessage('');
     const isIdQuery = /^[0-9]+[0-9Xx]?$/.test(normalized);
     const nextMode: 'id' | 'name' = isIdQuery ? 'id' : 'name';
     const normalizedQuery = isIdQuery ? normalized.toUpperCase() : normalized;
@@ -55,6 +58,7 @@ function DataQuery({ onBack, users }: DataQueryProps) {
     setHasSearched(false);
     setResults([]);
     setExpandedIds([]);
+    setQueryMessage('');
   };
 
   const toggleCard = (id: string) => {
@@ -83,7 +87,7 @@ function DataQuery({ onBack, users }: DataQueryProps) {
         </div>
 
         <div className="px-5 py-6">
-          <form onSubmit={handleSearch} className="rounded-2xl border border-[#d7e1ea] bg-[#f8fbff] p-4">
+          <form onSubmit={handleSearch} className="bank-subpanel">
             <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--bank-blue)]">
               Query Module
             </p>
@@ -97,30 +101,42 @@ function DataQuery({ onBack, users }: DataQueryProps) {
               <input
                 type="text"
                 value={queryInput}
-                onChange={(event) => setQueryInput(event.target.value)}
+                onChange={(event) => {
+                  setQueryInput(event.target.value);
+                  if (queryMessage) {
+                    setQueryMessage('');
+                  }
+                }}
                 placeholder="输入身份证号或姓名"
-                className="min-h-12 flex-1 rounded-lg border border-[#d7e1ea] bg-white px-4 text-sm text-[color:var(--bank-text)] outline-none transition placeholder:text-slate-400 focus:border-[color:var(--bank-blue)]"
+                className="bank-input"
               />
               <button
                 type="submit"
-                className="min-h-12 rounded-lg bg-[color:var(--bank-navy)] px-4 text-sm font-medium text-white shadow-sm transition hover:bg-[#244a79]"
+                className="bank-primary-button bg-[color:var(--bank-navy)] hover:bg-[#244a79]"
               >
                 查询
               </button>
               <button
                 type="button"
                 onClick={handleClear}
-                className="min-h-12 rounded-lg border border-[#d7e1ea] bg-white px-4 text-sm font-medium text-[color:var(--bank-navy)] shadow-sm transition hover:border-[color:var(--bank-blue)]"
+                className="bank-secondary-button"
               >
                 清除
               </button>
             </div>
+            {queryMessage ? (
+              <p className="mt-3 text-sm font-medium text-[color:var(--bank-danger)]">{queryMessage}</p>
+            ) : (
+              <p className="mt-3 text-xs leading-5 text-[color:var(--bank-muted)]">
+                含数字或尾号 X 的输入会按身份证号精确匹配，其他输入将按姓名关键字检索。
+              </p>
+            )}
           </form>
 
           {hasSearched ? (
             results.length > 0 ? (
               <div className="mt-5">
-                <div className="rounded-2xl border border-[#d7e1ea] bg-white p-4 shadow-sm">
+                <div className="bank-fade-up rounded-2xl border border-[#d7e1ea] bg-white p-4 shadow-sm">
                   <p className="text-sm font-semibold text-[color:var(--bank-navy)]">
                     {searchMode === 'id' ? '身份证号精确匹配结果' : '姓名模糊匹配结果'}
                   </p>
@@ -141,7 +157,7 @@ function DataQuery({ onBack, users }: DataQueryProps) {
                 </div>
               </div>
             ) : (
-              <div className="mt-5 rounded-2xl border border-[#d7e1ea] bg-white p-4 shadow-sm">
+              <div className="bank-fade-up mt-5 rounded-2xl border border-[#d7e1ea] bg-white p-4 shadow-sm">
                 <p className="text-sm font-semibold text-[color:var(--bank-navy)]">未找到匹配的用户</p>
                 <p className="mt-2 text-sm leading-6 text-[color:var(--bank-muted)]">
                   请检查输入内容后重新查询，或尝试改用姓名关键字搜索。
@@ -163,7 +179,7 @@ function DataQuery({ onBack, users }: DataQueryProps) {
         type="button"
         onClick={scrollToTop}
         aria-label="返回顶部"
-        className="fixed bottom-6 right-6 z-20 flex h-14 w-14 items-center justify-center rounded-full border border-white/50 bg-[rgba(255,255,255,0.55)] text-[color:var(--bank-blue)] shadow-[0_10px_30px_rgba(43,108,176,0.22)] backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-[rgba(255,255,255,0.7)]"
+        className="bank-top-button"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
