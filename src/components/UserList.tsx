@@ -80,7 +80,7 @@ function UserList({ onBack, totalUsers, users }: UserListProps) {
               </div>
             </div>
             <p className="mt-3 text-sm leading-6 text-[color:var(--bank-muted)]">
-              为了减少页面冗长感，当前页默认仅展开第一张卡片，其余卡片可按需展开查看。
+              点击卡片可展开查看完整档案
             </p>
           </div>
 

@@ -7,7 +7,6 @@ type HomeProps = {
 
 const heroImageUrl =
   'https://cdn.pixabay.com/photo/2018/12/28/12/43/china-3899509_1280.jpg';
-const heroSourceUrl = 'https://pixabay.com/photos/china-bank-central-hong-kong-asia-3899509/';
 
 const featureItems = [
   {
@@ -69,7 +68,7 @@ function Home({ totalUsers, onNavigate }: HomeProps) {
                     BANKING RISK INSIGHT
                   </div>
                   <h2 className="mt-3 text-[26px] font-semibold leading-tight">
-                    面向演示场景的移动端风险筛查入口
+                    用户风险画像与智能评估入口
                   </h2>
                   <p className="mt-2 text-sm leading-6 text-white/85">
                     聚合用户档案、账户信息与年龄风险规则，为内部演示提供清晰直观的浏览入口。
@@ -86,12 +85,12 @@ function Home({ totalUsers, onNavigate }: HomeProps) {
                 </p>
               </div>
               <div className="rounded-2xl border border-[#d7e1ea] bg-[#fffaf0] px-3 py-3">
-                <p className="text-[11px] text-[color:var(--bank-muted)]">部署形态</p>
-                <p className="mt-2 text-base font-semibold text-[color:var(--bank-navy)]">静态站点</p>
+                <p className="text-[11px] text-[color:var(--bank-muted)]">核心能力</p>
+                <p className="mt-2 text-base font-semibold text-[color:var(--bank-navy)]">智能风控</p>
               </div>
               <div className="rounded-2xl border border-[#d7e1ea] bg-[#f5fbf7] px-3 py-3">
-                <p className="text-[11px] text-[color:var(--bank-muted)]">终端优先</p>
-                <p className="mt-2 text-base font-semibold text-[color:var(--bank-navy)]">手机端</p>
+                <p className="text-[11px] text-[color:var(--bank-muted)]">系统架构</p>
+                <p className="mt-2 text-base font-semibold text-[color:var(--bank-navy)]">轻量化部署</p>
               </div>
             </div>
 
@@ -122,22 +121,14 @@ function Home({ totalUsers, onNavigate }: HomeProps) {
             </div>
 
             <div className="mt-5 rounded-2xl border border-[#ead9a5] bg-[#fffaf0] px-4 py-3">
-              <p className="text-sm font-medium text-[color:var(--bank-navy)]">当前状态</p>
+              <p className="text-sm font-medium text-[color:var(--bank-navy)]">系统公告</p>
               <p className="mt-1 text-sm leading-6 text-[color:var(--bank-muted)]">
-                3 个入口已接入视图切换，当前功能页先展示标题占位内容。
+                系统提示：数据已于 2026-03-19 更新，评估规则版本 v2.1
               </p>
             </div>
 
             <div className="mt-5 rounded-2xl border border-[#d7e1ea] bg-[#f8fbff] px-4 py-3 text-xs leading-5 text-[color:var(--bank-muted)]">
-              Hero 图片来源：
-              <a
-                href={heroSourceUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="ml-1 font-medium text-[color:var(--bank-blue)] underline decoration-[color:var(--bank-gold)] underline-offset-4"
-              >
-                Pixabay 免费图库
-              </a>
+              © 2026 风控演示系统 · 仅供内部评估使用
             </div>
           </div>
         </section>
