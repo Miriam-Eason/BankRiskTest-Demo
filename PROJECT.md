@@ -148,6 +148,9 @@ import userData from './data/data.json';
 - 每张卡片显示用户的全部字段
 - 分页：每页 10 条，底部有「上一页 / 下一页」按钮和页码显示（如"第 3/100 页"）
 - 顶部显示总数据条数（如"共 1000 条记录"）
+- 当顶部「← 返回主页」区域离开视口时，页面左上角需浮出一个固定定位的圆形返回按钮
+- 悬浮返回按钮必须使用 `IntersectionObserver` 监测顶部 header 可见性，不使用 `scroll` 事件监听
+- 页面右下角需提供固定定位的“回到顶部”按钮，当 `scrollY > 300` 时显示，否则隐藏
 
 ### 5.3 开启风险评估（RiskAssessment）
 
@@ -167,10 +170,11 @@ import userData from './data/data.json';
 - loading 使用 `useState + useEffect + setTimeout` 实现
 - loading 配色统一使用主色 `#1a365d` 与强调色 `#c9a84c`
 - 顶部有搜索框：
-  - placeholder：「输入身份证号查询是否在风险名单中」
-  - 输入身份证号，点击搜索或按回车触发查询
-  - **找到：** 高亮展示该用户完整信息，标注「⚠️ 该用户在风险名单中」
-  - **未找到：** 显示「✅ 未在风险名单中找到该用户」
+  - placeholder：「输入身份证号或姓名查询风险名单」
+  - 输入全为数字或尾号为 `X` / `x` 时，按身份证号精确匹配
+  - 输入中文或其他非纯数字内容时，按姓名关键字模糊匹配
+  - **找到：** 高亮展示匹配到的风险用户完整信息
+  - **未找到：** 显示未匹配到风险用户的提示
   - 搜索框旁有清除按钮，点击后恢复完整风险列表
 
 ### 5.4 查询数据（DataQuery）
@@ -181,6 +185,14 @@ import userData from './data/data.json';
   - 输入含中文/非数字 → 按姓名模糊匹配（包含即可）
 - 查询结果以卡片展示，姓名查询可能返回多条
 - 无结果时显示「未找到匹配的用户」
+
+### 5.5 公共悬浮交互规范
+
+- `UserList`、`RiskAssessment`、`DataQuery` 3 个功能页面都必须复用同一套悬浮按钮逻辑
+- 悬浮返回按钮位置固定为 `top-4 left-4`
+- 回到顶部按钮位置固定为 `bottom-6 right-4`
+- 两个按钮共用 `fadeIn` 动画，出现时具有淡入效果；悬浮返回按钮还需包含从 `scale(0.8)` 到 `scale(1)` 的过渡
+- 若页面存在带 `transform` 的过渡容器，固定定位按钮不得直接受其影响；必要时可通过 portal 挂载到 `document.body`
 
 ---
 
@@ -347,6 +359,23 @@ const [currentView, setCurrentView] = useState<ViewType>('home');
 - 已在风险评估页增加首屏 `0.8` 秒的风险筛查 loading 动画
 - 所有实现均基于 React + Tailwind 完成，未新增任何依赖
 
+#### Step 12：悬浮按钮交互与 DevTools 排查修复
+
+- 已为 `UserList`、`RiskAssessment`、`DataQuery` 新增左上角悬浮返回按钮
+- 已为 3 个功能页面统一接入固定定位的回到顶部按钮显隐逻辑
+- 已抽离公共 hook 与组件，复用 `IntersectionObserver` 监测和滚动阈值逻辑
+- 已在 `index.css` 中新增 `fadeIn` keyframe 与公共动画 class
+- 已通过 Chrome DevTools MCP 复现并定位按钮不可见问题
+- 已确认根因是页面切换容器的 `transform` 影响了 fixed 元素定位
+- 已将两个固定按钮改为通过 portal 挂载到 `document.body`，确保在带过渡动画的页面中仍正确定位
+
+#### Step 13：风险评估搜索能力补充
+
+- 已为风险评估页面补充姓名模糊匹配搜索能力
+- 已将风险评估搜索逻辑调整为与查询页一致的双模式：身份证精确匹配、姓名关键字模糊匹配
+- 已更新风险评估页的搜索框 placeholder、操作说明和命中/未命中文案
+- 姓名搜索命中多个风险用户时，会以卡片列表形式展示全部匹配结果
+
 ### 已完成验证
 
 - `npm install` 已完成
@@ -366,6 +395,11 @@ const [currentView, setCurrentView] = useState<ViewType>('home');
 - 已验证 Chrome 开发者工具移动端视图下页面内容可铺满屏幕，不再出现整页缩在中间的留白边框
 - 已验证主页、查看用户、风险评估、查询数据之间的切换具备 `200ms` 淡出与 `200ms` 淡入过渡
 - 已验证风险评估页首次进入时会先显示 `0.8` 秒 loading，随后自动展示真实筛查结果
+- 已验证 3 个功能页面在顶部返回区域离开视口后，会显示左上角悬浮返回按钮
+- 已验证回到顶部按钮在 `scrollY > 300` 时显示，点击后可平滑回到页面顶部
+- 已通过 Chrome DevTools MCP 验证两个固定按钮已恢复为相对视口定位，不再被页面过渡 `transform` 带偏出屏幕
+- 已验证风险评估页现已同时支持身份证精确匹配与姓名模糊匹配
+- 已验证风险评估页姓名关键字命中多个用户时可正确展示多张风险卡片
 
 ### 下一步建议
 
@@ -433,6 +467,16 @@ const [currentView, setCurrentView] = useState<ViewType>('home');
 - **修改文件：** `PROJECT.md`、`src/index.css`、`src/App.tsx`、`src/components/Home.tsx`、`src/components/UserList.tsx`、`src/components/RiskAssessment.tsx`、`src/components/DataQuery.tsx`
 - **备注：** 已修复移动端设备模拟视图下的整页留白问题，统一为移动端全宽布局；同时补充页面切换淡入淡出动效，并为风险评估页新增 `0.8` 秒筛查 loading 动画，未新增任何依赖
 
+### Step 12：悬浮按钮交互与 DevTools 排查修复
+- **状态：** 已完成（2026-03-19）
+- **修改文件：** `PROJECT.md`、`src/index.css`、`src/components/UserList.tsx`、`src/components/RiskAssessment.tsx`、`src/components/DataQuery.tsx`、`src/components/FloatingBackButton.tsx`、`src/components/ScrollToTopButton.tsx`、`src/hooks/useFloatingBackButton.ts`、`src/hooks/useScrollThreshold.ts`
+- **备注：** 已新增悬浮返回按钮与按阈值显示的回到顶部按钮，并通过 Chrome DevTools MCP 定位 fixed 元素受页面 `transform` 影响的定位问题，最终通过 portal 挂载到 `document.body` 完成修复
+
+### Step 13：风险评估搜索能力补充
+- **状态：** 已完成（2026-03-19）
+- **修改文件：** `PROJECT.md`、`src/components/RiskAssessment.tsx`
+- **备注：** 已为风险评估页补充姓名模糊匹配能力，搜索逻辑现支持身份证精确匹配与姓名关键字检索，并同步更新结果提示与搜索说明文案
+
 ---
 
 ## 9. 给 AI 编码助手的通用指令
@@ -446,3 +490,4 @@ const [currentView, setCurrentView] = useState<ViewType>('home');
 7. **移动端优先**，所有 UI 先在 375px 宽度下验证
 8. **使用中文**编写界面文字和注释
 9. **每完成一个 Step，更新第 8 节的完成日志**
+10. **默认情况下，完成任务后必须同步更新 PROJECT.md；除非用户明确说明这次不要改文档**

@@ -32,7 +32,8 @@ function RiskAssessment({ onBack, users }: RiskAssessmentProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
   const [searchInput, setSearchInput] = useState('');
-  const [searchedId, setSearchedId] = useState('');
+  const [searchedQuery, setSearchedQuery] = useState('');
+  const [searchMode, setSearchMode] = useState<'id' | 'name'>('id');
   const [searchMessage, setSearchMessage] = useState('');
   const headerRef = useRef<HTMLDivElement | null>(null);
   const showFloatingBackButton = useFloatingBackButton(headerRef);
@@ -73,32 +74,40 @@ function RiskAssessment({ onBack, users }: RiskAssessmentProps) {
     setExpandedIds((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
   };
 
-  const searchResult = useMemo(() => {
-    if (!searchedId) {
-      return null;
+  const searchResults = useMemo(() => {
+    if (!searchedQuery) {
+      return [];
     }
 
-    return riskUsers.find((user) => user.身份证号.toUpperCase() === searchedId) ?? null;
-  }, [riskUsers, searchedId]);
+    return searchMode === 'id'
+      ? riskUsers.filter((user) => user.身份证号.toUpperCase() === searchedQuery)
+      : riskUsers.filter((user) => user.姓名.includes(searchedQuery));
+  }, [riskUsers, searchedQuery, searchMode]);
 
-  const hasSearched = searchedId !== '';
+  const hasSearched = searchedQuery !== '';
 
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const normalized = searchInput.trim().toUpperCase();
+    const normalized = searchInput.trim();
     if (!normalized) {
-      setSearchMessage('请输入身份证号后再进行查询。');
+      setSearchMessage('请输入身份证号或姓名后再进行查询。');
       return;
     }
 
+    const isIdQuery = /^[0-9]+[0-9Xx]?$/.test(normalized);
+    const nextMode: 'id' | 'name' = isIdQuery ? 'id' : 'name';
+    const nextQuery = isIdQuery ? normalized.toUpperCase() : normalized;
+
     setSearchMessage('');
-    setSearchedId(normalized);
+    setSearchMode(nextMode);
+    setSearchedQuery(nextQuery);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleClearSearch = () => {
     setSearchInput('');
-    setSearchedId('');
+    setSearchedQuery('');
+    setSearchMode('id');
     setSearchMessage('');
   };
 
@@ -182,7 +191,7 @@ function RiskAssessment({ onBack, users }: RiskAssessmentProps) {
                       setSearchMessage('');
                     }
                   }}
-                  placeholder="输入身份证号查询是否在风险名单中"
+                  placeholder="输入身份证号或姓名查询风险名单"
                   className="bank-input"
                 />
                 <button
@@ -203,37 +212,51 @@ function RiskAssessment({ onBack, users }: RiskAssessmentProps) {
                 <p className="mt-3 text-sm font-medium text-[color:var(--bank-danger)]">{searchMessage}</p>
               ) : (
                 <p className="mt-3 text-xs leading-5 text-[color:var(--bank-muted)]">
-                  支持按回车直接搜索，命中后会单独高亮显示该风险用户。
+                  输入数字或尾号 X 将按身份证号精确匹配，其他输入将按姓名关键字检索风险名单。
                 </p>
               )}
             </form>
 
             {hasSearched ? (
               <div className="mt-5">
-                {searchResult ? (
-                  <div className="rounded-2xl border border-[#feb2b2] bg-[#fff5f5] p-4 shadow-sm">
-                    <p className="text-sm font-semibold text-[color:var(--bank-danger)]">
-                      ⚠️ 该用户在风险名单中
-                    </p>
-                    <p className="mt-2 text-sm leading-6 text-[color:var(--bank-muted)]">
-                      已根据身份证号定位到风险用户，清除搜索后可恢复完整风险列表。
-                    </p>
-                    <div className="mt-4 rounded-xl border-l-4 border-[color:var(--bank-danger)] bg-[#fffaf9] pl-1">
-                      <UserCard
-                        user={searchResult}
-                        isExpanded
-                        onToggle={() => undefined}
-                        hideToggle
-                      />
+                {searchResults.length > 0 ? (
+                  <div>
+                    <div className="rounded-2xl border border-[#feb2b2] bg-[#fff5f5] p-4 shadow-sm">
+                      <p className="text-sm font-semibold text-[color:var(--bank-danger)]">
+                        {searchMode === 'id' ? '⚠️ 该用户在风险名单中' : '⚠️ 已找到风险名单匹配用户'}
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-[color:var(--bank-muted)]">
+                        {searchMode === 'id'
+                          ? '已根据身份证号定位到风险用户，清除搜索后可恢复完整风险列表。'
+                          : `已根据姓名关键字找到 ${searchResults.length} 条风险用户记录，清除搜索后可恢复完整风险列表。`}
+                      </p>
+                    </div>
+
+                    <div className="mt-4 space-y-4">
+                      {searchResults.map((user) => (
+                        <div
+                          key={user.身份证号}
+                          className="rounded-xl border-l-4 border-[color:var(--bank-danger)] bg-[#fffaf9] pl-1"
+                        >
+                          <UserCard
+                            user={user}
+                            isExpanded
+                            onToggle={() => undefined}
+                            hideToggle
+                          />
+                        </div>
+                      ))}
                     </div>
                   </div>
                 ) : (
                   <div className="bank-fade-up rounded-2xl border border-[#9ae6b4] bg-[#f0fff4] p-4 shadow-sm">
                     <p className="text-sm font-semibold text-[color:var(--bank-success)]">
-                      ✅ 未在风险名单中找到该用户
+                      {searchMode === 'id' ? '✅ 未在风险名单中找到该用户' : '✅ 未找到匹配的风险用户'}
                     </p>
                     <p className="mt-2 text-sm leading-6 text-[color:var(--bank-muted)]">
-                      当前输入的身份证号不在风险筛选结果中，可修改后再次搜索。
+                      {searchMode === 'id'
+                        ? '当前输入的身份证号不在风险筛选结果中，可修改后再次搜索。'
+                        : '当前输入的姓名关键字未匹配到风险名单中的用户，可修改后再次搜索。'}
                     </p>
                   </div>
                 )}
